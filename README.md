@@ -9,6 +9,8 @@
 ## 환경 정보
 - window 기반 pc에서 hyper-v를 이용하여 vm을 생성, 해당 vm들로 클러스터를 구축함
 
+<br/>
+
 ### Spec
 - master node
   - Ubuntu 20.04
