@@ -1,11 +1,15 @@
 # stdtrinfra
-- 개인 용도로 구축한 kubernetes 기반 인프라
-- window 기반 pc에서 hyper-v를 이용하여 vm을 생성, 해당 vm들로 클러스터를 구축함
+- 개인 용도로 구축한 kubernetes 기반 인프라 설정 관리용 Repository
+- 민감 정보는 private repository인 stdtrinfra-secrets에서 별도 관리
+
 
 <br/>
 <br/>
 
 ## 환경 정보
+- window 기반 pc에서 hyper-v를 이용하여 vm을 생성, 해당 vm들로 클러스터를 구축함
+
+### Spec
 - master node
   - Ubuntu 20.04
   - vCPU 4 core / Memory 4GB
