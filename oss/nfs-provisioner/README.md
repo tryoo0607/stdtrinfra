@@ -6,4 +6,7 @@
 <br/>
 
 ## with hostpath
-- k8s-v
+- k8s-m1 vm의 hostpath에 nfs로 저장하기 위한 설정
+
+## with Synology
+- synology nas에 nfs로 저장하기 위한 설정
