@@ -4,3 +4,6 @@
 
 <br/>
 <br/>
+
+## with hostpath
+- k8s-v
