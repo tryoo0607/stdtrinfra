@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-gdp
+  namespace: redis
+  labels:
+    app: redis-gdp
+spec:
+  selector:
+    app: redis-gdp
+  ports:
+    - protocol: TCP
+      port: 6379
+      nodePort: 31379
+      targetPort: 6379
+  type: NodePort
