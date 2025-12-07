@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ttyd
+  namespace: ttyd
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ttyd
+  template:
+    metadata:
+      labels:
+        app: ttyd
+    spec:
+      hostPID: true
+      containers:
+        - name: ttyd
+          image: tsl0922/ttyd:latest
+          securityContext:
+            privileged: true
+          command: ["bash"]
+          ports:
+            - name: http
+              containerPort: 7681

@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: stdtrinfra-ingress-oauth2
+  namespace: ttyd
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/proxy-buffer-size: "16k"
+    nginx.ingress.kubernetes.io/proxy-buffers-number: "4"
+spec:
+  ingressClassName: "nginx"
+  tls:
+    - hosts:
+        - "*.stdtrinfra.com"
+      secretName: stdtrinfra-tls
+  rules:
+    - host: ttyd.stdtrinfra.com
+      http:
+        paths:
+          - path: /oauth2
+            pathType: Prefix
+            backend:
+              service:
+                name: oauth2-svc
+                port:
+                  number: 443
