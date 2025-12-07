@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jenkins
+  namespace: jenkins
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jenkins
+  template:
+    metadata:
+      labels:
+        app: jenkins
+    spec:
+      initContainers:
+        - name: init-container
+          image: alpine
+          command: ["/bin/sh"]
+          args: ["-c","mkdir -p /agent","chown jenkins:jenkins -R /agent"]
+          volumeMounts:
+            - name: init-volume
+              mountPath: /agent
+      containers:
+        - name: jenkins
+          image: jenkins/jenkins:lts-jdk21
+          env:
+            - name: JAVA_OPTS
+              value: "-Dorg.apache.commons.jelly.tags.fmt.timeZone=Asia/Seoul"
+          ports:
+            - name: http-port
+              containerPort: 8080
+            - name: jnlp-port
+              containerPort: 50000
+          volumeMounts:
+            - name: jenkins-volume
+              mountPath: /var/jenkins_home
+            - name: init-volume
+              mountPath: /agent
+      volumes:
+        - name: init-volume
+          emptyDir: {}
+        - name: jenkins-volume
+          persistentVolumeClaim:
+            claimName: jenkins-pvc
