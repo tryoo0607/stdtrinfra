@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-postgres
+  namespace: linkwarden
+spec:
+  resources:
+    requests:
+      storage: 30Gi
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: nfs-client
