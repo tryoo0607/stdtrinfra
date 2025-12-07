@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gpt-oss-20b
+  namespace: gpt-oss
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vllm-gptoss-20b
+  template:
+    metadata:
+      labels:
+        app: vllm-gptoss-20b
+    spec:
+      tolerations:
+        - key: nvidia.com/gpu
+          operator: Exists
+          effect: NoSchedule
+      containers:
+        - name: inference-server
+          image: vllm/vllm-openai:gptoss
+          ports:
+            - containerPort: 8000
+          resources:
+            limits:
+              nvidia.com/gpu: 1
+              cpu: "8"
+              memory: "28Gi"
+            requests:
+              cpu: "4"
+              memory: "8Gi"
+          command: ["vllm", "serve"]
+          args:
+            - openai/gpt-oss-20b
+            - --dtype=bfloat16
+            - --enforce-eager
+            - --gpu-memory-utilization=0.3
+            - --max-model-len=512
+            - --max-num-seqs=1
+            - --tensor-parallel-size=1
+            - --swap-space=12
+            - --host=0.0.0.0
+          env:
+            - name: VLLM_ATTENTION_BACKEND
+              value: "TRITON_ATTN_VLLM_V1"
+            - name: PYTORCH_CUDA_ALLOC_CONF
+              value: "expandable_segments:True"
+            - name: CUDA_LAUNCH_BLOCKING
+              value: "1"
+            - name: TORCH_CUDA_ARCH_LIST
+              value: "7.5"
+            - name: VLLM_CPU_OFFLOAD
+              value: "true"
+            - name: PORT
+              value: "8000"
+          volumeMounts:
+            - mountPath: /root/.cache/huggingface
+              name: cache-volume
+            - mountPath: /root/.cache/vllm
+              name: cache-volume
+            - mountPath: /dev/shm
+              name: dshm
+      volumes:
+        - name: cache-volume
+          persistentVolumeClaim:
+            claimName: gpt-oss-cache-pvc
+        - name: dshm
+          emptyDir:
+            medium: Memory
