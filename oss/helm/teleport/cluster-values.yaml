@@ -1,0 +1,25 @@
+clusterName: teleport.stdtrinfra.com
+proxyListenerMode: multiplex
+acme: false
+
+tls:
+  existingSecretName: stdtrinfra-tls
+
+ingress:
+  enabled: true
+  suppressAutomaticWildcards: true
+  spec:
+    ingressClassName: nginx
+
+proxy_service:
+  enabled: true
+  public_addr: teleport.stdtrinfra.com:443
+  listen_addr: 0.0.0.0:3080
+
+proxy:
+  service:
+    type: ClusterIP
+
+annotations:
+  ingress:
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
