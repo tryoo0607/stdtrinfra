@@ -1,0 +1,49 @@
+apiVersion: kibana.k8s.elastic.co/v1
+kind: Kibana
+metadata:
+  name: kibana
+  namespace: insight
+spec:
+  version: 8.12.1
+  count: 1
+  elasticsearchRef:
+    name: es-cluster
+
+  podTemplate:
+    spec:
+      containers:
+        - name: kibana
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 5601
+              scheme: HTTP
+            initialDelaySeconds: 60
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 10
+            successThreshold: 1
+
+  http:
+    service:
+      spec:
+        type: ClusterIP
+    tls:
+      selfSignedCertificate:
+        disabled: true
+
+  config:
+    server.host: "0.0.0.0"
+    server.publicBaseUrl: "https://elastic.stdtrinfra.com"
+    server.ssl.enabled: false
+
+    xpack.observability.enabled: false
+
+    xpack.security.authc:
+      providers:
+        anonymous.anonymous1:
+          order: 0
+          credentials: elasticsearch_anonymous_user
+
+    xpack.fleet.enabled: false
+    xpack.encryptedSavedObjects.encryptionKey: "this_is_32_characters_long_secret_key!"
