@@ -5,12 +5,11 @@ metadata:
   namespace: insight
   annotations:
     kubernetes.io/ingress.class: "nginx"
-    nginx.ingress.kubernetes.io/auth-response-headers: Authorization
     nginx.ingress.kubernetes.io/proxy-buffer-size: "16k"
     nginx.ingress.kubernetes.io/proxy-buffers-number: "4"
     nginx.ingress.kubernetes.io/auth-signin: "https://oauth2-elastic.stdtrinfra.com/oauth2/start?rd=$scheme://$best_http_host$request_uri"
     nginx.ingress.kubernetes.io/auth-url: "https://oauth2-elastic.stdtrinfra.com/oauth2/auth"
-    nginx.ingress.kubernetes.io/auth-response-headers: "x-auth-reqeust-user, x-auth-request-email, x-auth-request-access-token"
+    nginx.ingress.kubernetes.io/auth-response-headers: "Authorization, x-auth-reqeust-user, x-auth-request-email, x-auth-request-access-token"
 spec:
   ingressClassName: nginx
   tls:
