@@ -381,7 +381,10 @@ executor: "CeleryExecutor"
 allowPodLaunching: true
 
 # Environment variables for all airflow containers
-env: []
+env:
+  - name: AIRFLOW__DAG_PROCESSOR__REFRESH_INTERVAL
+    value: "10"
+
 volumes: []
 
 # VolumeMounts for all airflow containers
