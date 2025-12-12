@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    k8s-app: oauth2-proxy
+  name: oauth2-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s-app: oauth2-proxy
+  template:
+    metadata:
+      labels:
+        k8s-app: oauth2-proxy
+    spec:
+      containers:
+        - name: oauth2-proxy
+          args:
+            - --provider=keycloak-oidc
+            - --code-challenge-method=S256
+            - --oidc-issuer-url=https://keycloak.stdtrinfra.com/realms/tr-infra
+            - --scope=openid profile email
+            - --client-id=$(OAUTH2_PROXY_CLIENT_ID)
+            - --client-secret=$(OAUTH2_PROXY_CLIENT_SECRET)
+            - --cookie-secret=$(OAUTH2_PROXY_COOKIE_SECRET)
+            - --cookie-secure=true
+            - --cookie-domain=.stdtrinfra.com
+            - --email-domain=*
+            - --whitelist-domain=.stdtrinfra.com
+            - --upstream=file:///dev/null
+            #- --reverse-proxy=true
+            - --pass-authorization-header=true
+            - --pass-user-headers=true
+            - --set-authorization-header=true
+            - --set-xauthrequest=true
+            - --cookie-refresh=1m
+            - --cookie-expire=30m
+            #- --redirect-url=https://$host/oauth2/callback
+            - --http-address=0.0.0.0:4180
+            - --skip-provider-button=true
+            - --insecure-oidc-allow-unverified-email=true
+            - --oidc-extra-audience=account
+          env:
+            - name: OAUTH2_PROXY_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: oauth2-proxy-secret
+                  key: OAUTH2_PROXY_CLIENT_ID
+            - name: OAUTH2_PROXY_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: oauth2-proxy-secret
+                  key: OAUTH2_PROXY_CLIENT_SECRET
+            - name: OAUTH2_PROXY_COOKIE_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: oauth2-proxy-secret
+                  key: OAUTH2_PROXY_COOKIE_SECRET
+          image: quay.io/oauth2-proxy/oauth2-proxy:v7.5.1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 4180
+              protocol: TCP
